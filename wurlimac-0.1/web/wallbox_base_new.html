@@ -1,0 +1,682 @@
+<html>
+  <head>
+  <style type="text/css">
+  body
+  {
+  background: black;
+  font-family: sans-serif;
+  color: rgb(65,50,240);
+  }
+  #wb_main
+  {
+  margin: auto;
+  display: block;
+  width: 520px;
+  height: 660px;
+  border: 2px outset white;
+  background: rgb(0,10,50);
+  padding: 10px;
+  }
+  #titleStrips
+  {
+  display: table;
+  border-collapse: separate;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 3px;
+  border-spacing: 8px;
+  vertical-align: middle;
+  }
+  .tStrip
+  {
+  display: table-cell;
+  margin: 5px;
+  border-spacing: 0px;
+  border: none;
+  background: rgb(50,10,250);
+  height: 70px;
+  background-image: url('/static/titlestrip_attempt_10-03-25.png');
+  background-repeat: repeat;
+  background-size: contain;
+  background-position: center;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+  }
+  #selLetter
+  {
+  display: table-caption;
+  font-weight: bold;
+  font-size: 36px;
+  font-family: serif;
+  padding: 10px;
+  width: 490px;
+  height: 40px;
+  border: 1px solid rgb(10,45,60);
+  background-image: url('/static/wurlimac-banner-web.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 380px;
+  background-color: rgb(10,30,45);
+  color: rgb(110,20,20);
+  vertical-align: middle;
+  }
+  .wbRow
+  {
+  display: table-row;
+  height: 73px;
+  vertical-align: middle;
+  }
+  #selectorButtons
+  {
+  display: table;
+  border-collapse: separate;
+  margin: 0 auto;
+  text-align: center;
+  border-spacing: 4px;
+  margin-top: 0px;
+  }
+  #letterRow, #numberRow
+  {
+  display: table-row;
+  }
+  
+  #stripRow
+  {
+  display: table-row;
+  height: 18px;
+  font-size: 16px;
+  overflow: hidden;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid white;
+  width: 100%;
+  }
+  
+   .idcBtn
+  {
+  display: table-cell;
+  width: 45px;
+  height: 20px;
+  text-align: center;
+  vertical-align: middle;
+  color: rgb(20,35,24);
+  margin: auto;
+  /*border: 1px solid white;*/
+  }
+  
+  #idcRow
+  {
+  width: 100%;
+  display: table-caption;
+  background-color: black;
+  margin-top: 5px;
+  text-align: center;
+/*  border: 1px solid red;*/
+  
+  }
+  
+  .ltrBtn, .nbrBtn, .pgBtn, .pulse, .flash, .unavailSel, .qSel, .pressed, .npSel
+  {
+  display: table-cell;
+  width: 32px;
+  height: 40px;
+  border: 3px outset rgb(35,50,90);
+  background: rgb(180,195,255);
+  font-size: 25px;
+  border-spacing: 4px;
+  vertical-align: middle;
+  color: black;
+  font-family: "Arial Narrow", sans-serif;
+  font-weight: bold;
+  }
+  
+  .pressed
+  {
+  background-color: rgb(190,200,255);
+
+  border-style: inset;
+  }
+  
+  .unavailSel
+  {
+  background-color: rgb(195,100,100);
+  border-color: rgb(35,10,10);
+  }
+  
+  .qSel
+  {
+  background-color: rgb(120,150,255);
+  border-color: rgb(10,25,55);
+  }
+  
+  .npSel
+  {
+  background-color: rgb(100,200,100);
+  border-color: rgb(10,35,10);
+  }
+  
+  .pgBtn
+  {
+  background: rgb(0,0,90);
+  color: rgb(80,90,255);
+  }
+  .blBtn
+  {
+  display: table-cell;
+  width: 32px;
+  height: 40px;
+  }
+  .strip_title, .strip_artist
+  {
+  display: block;
+  color: black;
+  text-align: center;
+  margin: auto;
+  }
+  .strip_title
+  {
+  font-family: "Arial Narrow", sans-serif;
+  padding: 3px;
+  margin-top: 8px;
+  font-size: 0.9em;
+  font-weight: bold;
+  overflow: hidden;
+  white-space: nowrap;
+  text-transform: uppercase;
+  width: 210px;
+  }
+  .strip_artist
+  {
+  font-size: .85em;
+  padding-top: 8px;
+  width: 160px;
+  overflow: visible;
+  white-space: pre-wrap;
+  border: none;
+  height: 27px;
+  text-transform: uppercase;
+  color: rgb(60,60,75);
+  }
+  .selNbr
+  {
+  margin: 0;
+  color: white;
+  border: 1px solid black;
+  background-color: rgb(100,100,110);
+  font-size: 15px;
+  width: 20px;
+  margin-left: 14px;
+  position: relative;
+  bottom: 6px;
+  left: -4px;
+  }
+  </style>
+  <style type="text/css" id="dynamicClasses">
+    .pulse
+    {
+    background-color: rgb(255,255,255);
+    
+    }
+    
+    .flash
+    {
+    background-color: rgb(255,255,255);
+    border-style: inset;
+    }
+  </style>
+  <script type="text/javascript">
+  
+  var pulseRate = 45;
+  var flashRate = 500;
+  var styleSheet = document.getElementById('dynamicClasses').sheet || document.styleSheets[0];
+  var rules = styleSheet.cssRules || styleSheet.rules;
+  var pulseRule = rules[0];
+  var flashRule = rules[1];
+  var currentIndex = 0;
+  var buttonDivIDs = ['ltrA', 'ltrB', 'ltrC', 'ltrD', 'ltrE', 'ltrF', 'ltrG', 'ltrH', 'ltrJ', 'ltrK',
+                'nbr1', 'nbr2', 'nbr3', 'nbr4', 'nbr5', 'nbr6', 'nbr7', 'nbr8', 'nbr9', 'nbr0'];
+  var stripDivIDs = ['wbIndex_1', 'wbIndex_2', 'wbIndex_3', 'wbIndex_4', 'wbIndex_5',
+                     'wbIndex_6', 'wbIndex_7', 'wbIndex_8', 'wbIndex_9', 'wbIndex_10'];
+  var wb_indices = ["1","2","3","4","5","6","7","8","9","10"];
+  var wb_rows = ["A","B","C","D","E","F","G","H","J","K"];
+  var wb_scroll = ["scrlBack", "scrlNext"]
+
+  function showWBContents(direction)
+  {
+    if (direction == "scrlBack") {
+      if (currentIndex == 0) {currentIndex = 9;}
+      else {currentIndex --;}
+    }
+    else
+    {
+      if (currentIndex == 9) {currentIndex = 0;}
+      else
+      {currentIndex ++;}
+    }
+    wb_indices.forEach(
+      function(index) {
+      document.querySelector("#wbIndex_"+index+" .strip_title").innerHTML = "&nbsp";
+      document.querySelector("#wbIndex_"+index+" .strip_artist").innerHTML = "&nbsp;";
+      });
+    display_selections(wb_rows[currentIndex]);
+    
+  }
+  
+  var prevLetter = "K"
+  function display_selections(letterSel)
+  {
+    rekwest = new XMLHttpRequest();
+    rekwest.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        ajaxString = rekwest.responseText;
+        let songData = JSON.parse(ajaxString);
+        let songs = songData.selections;
+        console.log(ajaxString);
+        
+      wb_indices.forEach(
+      function(index) {
+      
+      stripTitle = wb_rows[currentIndex]; stripArtist = wb_indices[currentIndex];
+      document.querySelector("#wbIndex_"+wb_indices[index - 1]+" .strip_title").innerHTML = songs[index - 1].name;
+      document.querySelector("#wbIndex_"+wb_indices[index - 1]+" .strip_artist").innerHTML = songs[index - 1].artist;
+      });
+       //document.getElementById('selLetter').innerHTML = "Selected Letter: "+letterSel;
+        document.getElementById("ind"+letterSel).style.color="rgb(0,255,0)";
+        document.getElementById("ind"+prevLetter).style.color="rgb(20,35,24)";
+        prevLetter = letterSel;
+        fillRandomColors();
+        }
+      }
+    rekwest.open("GET","/wbList?letter=" + letterSel);
+    rekwest.send();
+    
+    
+    
+    
+  }
+  
+  function queue_song(qLtr,qNbr)
+  {
+    rekwest = new XMLHttpRequest();
+    rekwest.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        ajaxString = rekwest.responseText;
+        console.log(ajaxString);
+        registerClickHandlers();
+        reset_button_classes();
+        }}
+        
+    rekwest.open("GET","/queueSong?letter=" + qLtr + "&amp;number=" + qNbr);
+    rekwest.send();
+  }
+  
+  function reset_button_classes()
+  {
+   buttonDivIDs.forEach(
+   function(idx) {
+    document.getElementById(idx).className="ltrBtn";
+    }
+  )
+  }
+  timeoutID = null;
+  function get_available_tracks(letterDIV)
+  { 
+    if (timeoutID) {clearTimeout(timeoutID);}
+    reset_button_classes();
+    assignFlash(letterDIV);
+    
+    timeoutID = setTimeout(
+    
+      function(){
+      
+      reset_button_classes();
+      registerClickHandlers();
+      
+      }
+    ,15000
+    );
+    
+    rekwest = new XMLHttpRequest();
+    rekwest.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        ajaxString = rekwest.responseText;
+        let songData = JSON.parse(ajaxString);
+        let availSongs = songData.available;
+        let unavailSongs = songData.cooldown;
+        let qSongs = songData.queued;
+        let npSong = songData.nowPlaying;
+        console.log(ajaxString);
+        
+        unavailSongs.forEach(
+          function(id)
+          {
+          targetDiv = document.getElementById("nbr"+id);
+          targetDiv.className="unavailSel";
+          targetDiv.onclick = function()
+            {
+            
+            }
+          }
+        )
+        
+        qSongs.forEach(
+        
+        function(id)
+          {
+          targetDiv = document.getElementById("nbr"+id);
+          targetDiv.className="qSel";
+          targetDiv.onclick = function()
+            {
+            
+            }
+          }
+        )
+        
+        npSong.forEach(
+        
+        function(id)
+          {
+          targetDiv = document.getElementById("nbr"+id);
+          targetDiv.className="npSel";
+          targetDiv.onclick = function()
+            {
+            
+            }
+          }
+        )
+        
+        availSongs.forEach(
+          function(id)
+          {
+          
+          targetDiv = document.getElementById("nbr"+id);
+          assignPulse(targetDiv);
+          targetDiv.onclick = function()
+            {
+            clearTimeout(timeoutID);
+            document.getElementById("nbr"+id).className="pressed";
+            letterDIV.className="pressed";
+            setTimeout(
+            
+            function(){
+//              document.getElementById("nbr"+id).style.borderStyle="outset";
+              queue_song(letterDIV.innerHTML,id);
+              }
+            ,1500
+            );
+            
+            }
+          }
+        )
+        
+        
+        }}
+    rekwest.open("GET","/checkAvail?letter=" + letterDIV.innerHTML);
+    rekwest.send();
+  }
+
+  function fillRandomColors()
+  {
+  
+  stripDivIDs.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { // Make sure the element exists
+        
+        
+                r = Math.floor(Math.random() * (255 - 30 + 1)) + 30;
+                g = Math.floor(Math.random() * (255 - 30 + 1)) + 30;
+                b = Math.floor(Math.random() * (255 - 30 + 1)) + 30;
+                el.style.backgroundColor = "rgb("+r+","+g+","+b+")";
+            
+        }
+    });
+  
+  }
+
+function registerClickHandlers() {
+    buttonDivIDs.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { // Make sure the element exists
+            el.onclick = function() {
+                console.log("Clicked:", id);
+                get_available_tracks(el);
+            };
+        }
+    });
+    stripDivIDs.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { // Make sure the element exists
+            el.onclick = function() {
+                console.log("Clicked:", id);
+                r = Math.floor(Math.random() * (255 - 30 + 1)) + 30;
+                g = Math.floor(Math.random() * (255 - 30 + 1)) + 30;
+                b = Math.floor(Math.random() * (255 - 30 + 1)) + 30;
+                el.style.backgroundColor = "rgb("+r+","+g+","+b+")";
+            };
+        }
+    });
+    wb_scroll.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { // Make sure the element exists
+            el.onclick = function() {
+                
+                showWBContents(id);
+                
+            };
+        }
+    });
+}
+
+  function flashClass()
+  {
+  var onOrOff = 0;
+  setInterval(
+    function(){
+      var minBrightness = 80;
+      var maxBrightness = 175;
+        if (onOrOff == 0)
+        {
+        varR = 215;
+        varG = 230;
+        varB = 255;
+        onOrOff = 1;
+        }
+        else
+        {
+        varR = 180;
+        varG = 195;
+        varB = 255;
+        onOrOff = 0;
+        }
+      flashRule.style.backgroundColor="rgb("+varR+","+varG+","+varB+")";
+    }, flashRate
+  );
+  }
+  function pulseClass()
+  {
+  var pSteps = 15;
+  var stepIndex = 0;
+  var stepDirection = "forward";
+  var sourceR = 215;
+  var sourceG = 230;
+  var sourceB = 255;
+  var minimumBrightness = 75;
+  rInt = Math.round(sourceR / pSteps);
+  gInt = Math.round(sourceG / pSteps);
+  bInt = Math.round(sourceB / pSteps);
+  setInterval(
+    
+    function(){
+      if (stepDirection == "forward" && stepIndex < pSteps)
+      {
+      
+      stepIndex ++;
+      }
+      else if (stepDirection == "forward" && stepIndex == pSteps)
+      {
+      
+      stepDirection = "backward";
+      }
+      else if (stepDirection == "backward" && stepIndex > 0)
+      {
+      
+      stepIndex --;
+      }
+      else if (stepDirection == "backward" && stepIndex == 0)
+      {
+      
+      stepDirection = "forward";
+      }
+      newR = (stepIndex * rInt);
+      newG = (stepIndex * gInt);
+      newB = (stepIndex * bInt);
+      if (newR < minimumBrightness)
+      {newR = minimumBrightness;}
+      if (newG < minimumBrightness)
+      {newG = minimumBrightness;}
+      if (newB < minimumBrightness)
+      {newB = minimumBrightness;}
+    pulseRule.style.backgroundColor="rgb("+newR+","+newG+","+newB+")";
+    }
+    ,pulseRate);
+  }
+  function assignFlash(element)
+  {
+  document.getElementById(element.id).className="flash";
+  }
+  function assignPulse(element)
+  {
+  document.getElementById(element.id).className="pulse";
+  }
+document.addEventListener("DOMContentLoaded", registerClickHandlers);
+  document.addEventListener("DOMContentLoaded", function() {
+  pulseClass();
+  flashClass();
+  display_selections("A");
+  });
+
+  </script>
+
+  </head>
+
+  <body>
+  
+  <div id="wb_main" class="none">
+    <div id="titleStrips">
+      <div id="selLetter">&nbsp;</div>
+    <div id="idcRow">
+      <div id="hostRow"></div>
+      <div id="stripRow">
+        <div class="blBtn2"> </div>
+      	<div class="idcBtn" id="indA">A</div>
+      	<div class="idcBtn" id="indB">B</div>
+      	<div class="idcBtn" id="indC">C</div>
+      	<div class="idcBtn" id="indD">D</div>
+      	<div class="idcBtn" id="indE">E</div>
+      	<div class="idcBtn" id="indF">F</div>
+      	<div class="idcBtn" id="indG">G</div>
+      	<div class="idcBtn" id="indH">H</div>
+      	<div class="idcBtn" id="indJ">J</div>
+      	<div class="idcBtn" id="indK">K</div>
+      	<div class="blBtn2"> </div>
+      </div>
+    </div>
+      <div class="wbRow">
+        <div class="tStrip" id="wbIndex_1">
+          <p class="strip_title">Girls Just Wanna Have Fun</p>
+          <p class="strip_artist">Cyndi Lauper</p>
+          <p class="selNbr">1</p>
+        </div>
+        <div class="tStrip" id="wbIndex_6">
+          <p class="strip_title">Wannabe</p>
+          <p class="strip_artist">Spice Girls</p>
+          <p class="selNbr">6</p>
+        </div>
+      </div>
+      <div class="wbRow">
+        <div class="tStrip" id="wbIndex_2">
+          <p class="strip_title">Smells Like Teen Spirit</p>
+          <p class="strip_artist">Nirvana</p>
+          <p class="selNbr">2</p>
+        </div>
+        <div class="tStrip" id="wbIndex_7">
+          <p class="strip_title">Red</p>
+          <p class="strip_artist">Taylor Swift</p>
+          <p class="selNbr">7</p>
+        </div>
+      </div>
+      <div class="wbRow">
+        <div class="tStrip" id="wbIndex_3">
+          <p class="strip_title">All Summer Long</p>
+          <p class="strip_artist">Kid Rock</p>
+          <p class="selNbr">3</p>
+        </div>
+        <div class="tStrip" id="wbIndex_8">
+          <p class="strip_title">Sultans of Swing</p>
+          <p class="strip_artist">Dire Straits</p>
+          <p class="selNbr">8</p>
+        </div>
+      </div>
+      <div class="wbRow">
+        <div class="tStrip" id="wbIndex_4">
+          <p class="strip_title">There Are Places I Remember</p>
+          <p class="strip_artist">The Beatles</p>
+          <p class="selNbr">4</p>
+        </div>
+        <div class="tStrip" id="wbIndex_9">
+          <p class="strip_title">Carry On Wayward Son</p>
+          <p class="strip_artist">Kansas</p>
+          <p class="selNbr">9</p>
+        </div>
+      </div>
+      <div class="wbRow">
+        <div class="tStrip" id="wbIndex_5">
+          <p class="strip_title">No Matter What</p>
+          <p class="strip_artist">Badfinger</p>
+          <p class="selNbr">5</p>
+        </div>
+        <div class="tStrip" id="wbIndex_10">
+          <p class="strip_title">Karma Chameleon</p>
+          <p class="strip_artist">Culture Club</p>
+          <p class="selNbr">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="selectorButtons">
+
+      <div id="letterRow">
+        <div class="pgBtn" id="scrlBack"> &lt;&lt; </div>
+      	<div class="ltrBtn" id="ltrA">A</div>
+      	<div class="ltrBtn" id="ltrB">B</div>
+      	<div class="ltrBtn" id="ltrC">C</div>
+      	<div class="ltrBtn" id="ltrD">D</div>
+      	<div class="ltrBtn" id="ltrE">E</div>
+      	<div class="ltrBtn" id="ltrF">F</div>
+      	<div class="ltrBtn" id="ltrG">G</div>
+      	<div class="ltrBtn" id="ltrH">H</div>
+      	<div class="ltrBtn" id="ltrJ">J</div>
+      	<div class="ltrBtn" id="ltrK">K</div>
+      	<div class="pgBtn" id="scrlNext"> &gt;&gt; </div>
+      </div>
+      <div id="numberRow">
+        <div class="blBtn"> </div>
+        <div class="nbrBtn" id="nbr1">1</div>
+        <div class="nbrBtn" id="nbr2">2</div>
+        <div class="nbrBtn" id="nbr3">3</div>
+        <div class="nbrBtn" id="nbr4">4</div>
+        <div class="nbrBtn" id="nbr5">5</div>
+        <div class="nbrBtn" id="nbr6">6</div>
+        <div class="nbrBtn" id="nbr7">7</div>
+        <div class="nbrBtn" id="nbr8">8</div>
+        <div class="nbrBtn" id="nbr9">9</div>
+        <div class="nbrBtn" id="nbr0">0</div>
+        <div class="blBtn"> </div>
+      </div>
+    </div>
+  </div>
+  
+  </body>
+
+</html>
